@@ -1,0 +1,6 @@
+{"type": "user", "timestamp": "2025-03-10T15:00:00Z", "message": {"role": "user", "content": "Can you check the staging server logs for the 500 errors?"}}
+{"type": "assistant", "timestamp": "2025-03-10T15:00:20Z", "message": {"role": "assistant", "content": [{"type": "text", "text": "My notes say staging has no SSH. I will try SSH once before I use the console."}, {"type": "tool_use", "id": "t1", "name": "Bash", "input": {"command": "ssh staging hostname"}}]}}
+{"type": "user", "timestamp": "2025-03-10T15:00:25Z", "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "t1", "content": "staging-1"}]}}
+{"type": "assistant", "timestamp": "2025-03-10T15:00:40Z", "message": {"role": "assistant", "content": [{"type": "text", "text": "SSH to staging works: ssh staging printed staging-1. The note that says there is no SSH is wrong."}, {"type": "tool_use", "id": "t2", "name": "Bash", "input": {"command": "ssh staging tail -5 /var/log/acme/app.log"}}]}}
+{"type": "user", "timestamp": "2025-03-10T15:00:45Z", "message": {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "t2", "content": "2025-03-10 14:58:01 ERROR 500 /api/orders timeout"}]}}
+{"type": "assistant", "timestamp": "2025-03-10T15:01:00Z", "message": {"role": "assistant", "content": [{"type": "text", "text": "The 500s are order API timeouts."}]}}

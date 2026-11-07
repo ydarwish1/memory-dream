@@ -1,0 +1,114 @@
+{
+ "goals": [
+  "Ship the board redesign.",
+  "Launch the public API (read endpoints first)."
+ ],
+ "topics": [
+  {
+   "id": "servers",
+   "title": "Servers and access",
+   "purpose": "How to reach the servers and what runs where.",
+   "words": [
+    "staging",
+    "server",
+    "ssh",
+    "port",
+    "api",
+    "worker",
+    "disk",
+    "logs",
+    "log",
+    "database",
+    "cdn",
+    "node",
+    "postgres",
+    "cron",
+    "backup",
+    "queue",
+    "monitoring",
+    "dns",
+    "url"
+   ],
+   "facts": []
+  },
+  {
+   "id": "releases",
+   "title": "Releases and deploys",
+   "purpose": "How a change reaches production, and the deploy history.",
+   "words": [
+    "deploy",
+    "deployed",
+    "release",
+    "checklist",
+    "migrations",
+    "rollback",
+    "version",
+    "production",
+    "flags"
+   ],
+   "facts": []
+  },
+  {
+   "id": "workflow",
+   "title": "How we work",
+   "purpose": "Tested rules for code, review and tests.",
+   "words": [
+    "review",
+    "merge",
+    "prs",
+    "pull",
+    "commits",
+    "tests",
+    "test",
+    "flaky",
+    "python",
+    "uv",
+    "errors",
+    "measure",
+    "backup",
+    "bulk",
+    "ci",
+    "runner"
+   ],
+   "facts": []
+  },
+  {
+   "id": "alex",
+   "title": "Alex: how alex likes to work",
+   "purpose": "Who alex is and how to talk with alex.",
+   "words": [
+    "alex",
+    "user",
+    "answers",
+    "short",
+    "question",
+    "plain",
+    "timezone",
+    "role",
+    "glossary",
+    "cite",
+    "onboarding"
+   ],
+   "facts": []
+  },
+  {
+   "id": "product",
+   "title": "acme-app product decisions",
+   "purpose": "Roadmap, pricing and design decisions.",
+   "words": [
+    "roadmap",
+    "pricing",
+    "board",
+    "redesign",
+    "public",
+    "scope",
+    "cache",
+    "idea",
+    "billing",
+    "support",
+    "secrets"
+   ],
+   "facts": []
+  }
+ ]
+}

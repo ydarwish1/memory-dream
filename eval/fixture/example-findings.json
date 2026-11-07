@@ -1,0 +1,14 @@
+[
+ {
+  "note": "reference_staging_access.md",
+  "verdict": "stale",
+  "evidence": "transcripts/session-2025-03-10.jsonl:3 (LIVE): `ssh staging hostname` printed staging-1, so SSH to staging works.",
+  "now": "Reach staging with `ssh staging`."
+ },
+ {
+  "note": "project_api_port.md",
+  "verdict": "rewrite",
+  "replacement": "The acme-app API listens on port 9090 on the app server since 2025-03-11. Health check: curl localhost:9090/health. Verified 2025-03-12: the health check answered ok on 9090 (transcript session-2025-03-12.jsonl:3).",
+  "evidence": "alex said the API moved to 9090 (session-2025-03-12.jsonl:1) and the health check passed on 9090 (:3)."
+ }
+]

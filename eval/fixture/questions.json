@@ -1,0 +1,134 @@
+[
+ {
+  "id": "ssh-staging",
+  "q": "How do I get a shell on staging?",
+  "query": "ssh into staging server shell access",
+  "keys": [
+   "ssh staging"
+  ],
+  "split": "dev",
+  "proof": "transcripts/session-2025-03-10.jsonl:3",
+  "kind": "transcript"
+ },
+ {
+  "id": "api-port",
+  "q": "Which port does the API use?",
+  "query": "api port health check",
+  "keys": [
+   "9090"
+  ],
+  "split": "heldout",
+  "proof": "transcripts/session-2025-03-12.jsonl:3",
+  "kind": "transcript"
+ },
+ {
+  "id": "restart-worker",
+  "q": "How do I restart the background worker?",
+  "query": "restart background worker",
+  "keys": [
+   "systemctl restart acme-worker"
+  ],
+  "split": "dev",
+  "proof": "pool/reference_restart_worker.md",
+  "kind": "note"
+ },
+ {
+  "id": "python-tool",
+  "q": "Which tool installs Python packages?",
+  "query": "python packages install tool",
+  "keys": [
+   "uv sync"
+  ],
+  "split": "dev",
+  "proof": "pool/feedback_python_use_uv.md",
+  "kind": "note"
+ },
+ {
+  "id": "latest-deploy",
+  "q": "What is the latest deployed version?",
+  "query": "latest deploy version production",
+  "keys": [
+   "v1.4"
+  ],
+  "split": "dev",
+  "proof": "transcripts/session-2025-03-12.jsonl:6",
+  "kind": "transcript"
+ },
+ {
+  "id": "log-path",
+  "q": "Where does the app write its logs?",
+  "query": "where are the app logs",
+  "keys": [
+   "/var/log/acme/app.log"
+  ],
+  "split": "heldout",
+  "proof": "transcripts/session-2025-03-10.jsonl:5",
+  "kind": "transcript"
+ },
+ {
+  "id": "short-answers",
+  "q": "How does alex like answers?",
+  "query": "alex prefers answers style",
+  "keys": [
+   "result first"
+  ],
+  "split": "dev",
+  "proof": "pool/user_alex_short_answers.md",
+  "kind": "note"
+ },
+ {
+  "id": "review-rule",
+  "q": "What does a pull request need before merge?",
+  "query": "pull request merge approvals",
+  "keys": [
+   "two approvals"
+  ],
+  "split": "dev",
+  "proof": "pool/feedback_review_before_merge.md",
+  "kind": "note"
+ },
+ {
+  "id": "flaky-dates",
+  "q": "How do we fix flaky date tests?",
+  "query": "flaky date tests midnight",
+  "keys": [
+   "freeze the clock"
+  ],
+  "split": "heldout",
+  "proof": "pool/feedback_flaky_test_freeze_clock.md",
+  "kind": "note"
+ },
+ {
+  "id": "disk-check",
+  "q": "How do I check disk space?",
+  "query": "check disk space",
+  "keys": [
+   "df -h"
+  ],
+  "split": "dev",
+  "proof": "pool/reference_check_disk.md",
+  "kind": "note"
+ },
+ {
+  "id": "release-steps",
+  "q": "What are the release steps?",
+  "query": "release checklist steps",
+  "keys": [
+   "tag the release"
+  ],
+  "split": "dev",
+  "proof": "pool/reference_deploy_checklist.md",
+  "kind": "note"
+ },
+ {
+  "id": "cache-idea",
+  "q": "What was the cache idea?",
+  "query": "cache idea after deploy",
+  "keys": [
+   "busiest pages"
+  ],
+  "split": "heldout",
+  "proof": "pool/project_cache_warmup_idea.md",
+  "kind": "note"
+ }
+]

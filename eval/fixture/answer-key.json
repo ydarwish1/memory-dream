@@ -1,0 +1,92 @@
+{
+ "index_over_budget": true,
+ "conflict_copies": [
+  "MEMORY.sync-conflict-20250305-101500-ABCDEF1.md",
+  "feedback_review_before_merge.sync-conflict-20250306-090000-ABCDEF1.md"
+ ],
+ "duplicates": [
+  {
+   "keep": "feedback_python_use_uv.md",
+   "duplicate": "feedback_use_uv_for_python.md"
+  },
+  {
+   "keep": "reference_restart_worker.md",
+   "duplicate": "reference_worker_restart_steps.md"
+  },
+  {
+   "keep": "user_alex_short_answers.md",
+   "duplicate": "user_prefers_short_answers.md"
+  }
+ ],
+ "series_older": [
+  "project_acme_deploy_v11.md",
+  "project_acme_deploy_v12.md",
+  "project_acme_deploy_v13.md"
+ ],
+ "broken_links_fixable": [
+  {
+   "note": "feedback_onboarding_notes.md",
+   "link": "[[staging-acess]]",
+   "to": "reference_staging_access"
+  },
+  {
+   "note": "reference_release_flow.md",
+   "link": "[[deploy-checklst]]",
+   "to": "reference_deploy_checklist"
+  }
+ ],
+ "broken_links_unfixable": [
+  {
+   "note": "reference_release_flow.md",
+   "link": "[[old-runbook]]"
+  },
+  {
+   "note": "project_roadmap.md",
+   "link": "[[q3-roadmap]]"
+  }
+ ],
+ "contradicted": [
+  {
+   "note": "reference_staging_access.md",
+   "evidence": "transcripts/session-2025-03-10.jsonl:3 (ssh staging hostname -> staging-1)"
+  },
+  {
+   "note": "project_api_port.md",
+   "evidence": "transcripts/session-2025-03-12.jsonl:1 and :3 (moved to 9090; health ok on 9090)"
+  }
+ ],
+ "state_unmarked": [
+  "project_acme_deploy_v14.md",
+  "project_api_port.md",
+  "project_backup_cron.md",
+  "project_cache_warmup_idea.md",
+  "project_cdn_setup.md",
+  "project_ci_runner.md",
+  "project_db_version.md",
+  "project_disk_usage.md",
+  "project_node_version.md",
+  "project_queue_size.md",
+  "project_staging_url.md",
+  "reference_log_locations.md",
+  "reference_staging_access.md"
+ ],
+ "orphans": [
+  "project_cache_warmup_idea.md",
+  "reference_log_locations.md",
+  "feedback_small_prs.md"
+ ],
+ "good_notes_unchanged": [
+  "feedback_review_before_merge.md",
+  "feedback_flaky_test_freeze_clock.md",
+  "feedback_small_commits.md",
+  "feedback_read_errors_fully.md",
+  "feedback_one_question_at_a_time.md",
+  "user_alex_role.md",
+  "user_alex_timezone.md",
+  "feedback_measure_before_claiming.md",
+  "feedback_plain_words.md",
+  "feedback_backup_before_bulk_edits.md",
+  "reference_glossary.md",
+  "feedback_name_the_file.md"
+ ]
+}

@@ -1,0 +1,236 @@
+# Memory index
+
+- [Review Before Merge](feedback_review_before_merge.md) — Every pull request needs two approvals before merge
+- [Flaky Test Freeze Clock](feedback_flaky_test_freeze_clock.md) — Flaky date tests: freeze the clock
+- [Small Commits](feedback_small_commits.md) — Keep commits small and named by what they change
+- [Read Errors Fully](feedback_read_errors_fully.md) — Read the innermost error frame first
+- [One Question At A Time](feedback_one_question_at_a_time.md) — Ask one question at a time
+- [Alex Role](user_alex_role.md) — Alex is the solo founder of acme-app
+- [Alex Timezone](user_alex_timezone.md) — Alex works in the afternoon and evening
+- [Measure Before Claiming](feedback_measure_before_claiming.md) — A speed claim needs a before and after number
+- [Plain Words](feedback_plain_words.md) — Explain in plain words first
+- [Backup Before Bulk Edits](feedback_backup_before_bulk_edits.md) — Back up before a bulk edit
+- [Glossary](reference_glossary.md) — Words alex uses for parts of acme-app
+- [Name The File](feedback_name_the_file.md) — Cite the file a fact came from
+- [Python Use Uv](feedback_python_use_uv.md) — Use uv for Python packages
+- [Use Uv For Python](feedback_use_uv_for_python.md) — Use uv for Python packages
+- [Restart Worker](reference_restart_worker.md) — How to restart the background worker
+- [Worker Restart Steps](reference_worker_restart_steps.md) — How to restart the background worker
+- [Alex Short Answers](user_alex_short_answers.md) — Alex prefers short answers
+- [Prefers Short Answers](user_prefers_short_answers.md) — Alex prefers short answers
+- [Acme Deploy V11](project_acme_deploy_v11.md) — acme-app v1.1 deployed 2025-01-10
+- [Acme Deploy V12](project_acme_deploy_v12.md) — acme-app v1.2 deployed 2025-01-24
+- [Acme Deploy V13](project_acme_deploy_v13.md) — acme-app v1.3 deployed 2025-02-07
+- [Acme Deploy V14](project_acme_deploy_v14.md) — acme-app v1.4 deployed 2025-03-05
+- [Staging Access](reference_staging_access.md) — Staging has no SSH; use the web console
+- [Api Port](project_api_port.md) — The acme-app API listens on port 8080
+- [Deploy Checklist](reference_deploy_checklist.md) — Release checklist for acme-app
+- [Onboarding Notes](feedback_onboarding_notes.md) — What a new session should read first
+- [Release Flow](reference_release_flow.md) — How a release moves from branch to production
+- [Roadmap](project_roadmap.md) — acme-app roadmap themes
+- [Db Version](project_db_version.md) — The database runs Postgres 16.2
+- [Disk Usage](project_disk_usage.md) — The app server disk was 81% full
+- [Ci Runner](project_ci_runner.md) — CI runs on a self-hosted runner
+- [Backup Cron](project_backup_cron.md) — Nightly backup cron at 02:00
+- [Staging Url](project_staging_url.md) — Staging lives at staging.example.com
+- [Cdn Setup](project_cdn_setup.md) — Static files go through the CDN
+- [Queue Size](project_queue_size.md) — The job queue holds about 2,000 jobs a day
+- [Node Version](project_node_version.md) — acme-app runs on Node 22.11.0
+- [Check Disk](reference_check_disk.md) — How to check disk space on the app server
+- [Tail Logs](reference_tail_logs.md) — How to follow the app log
+- [Run Tests](reference_run_tests.md) — How to run the test suite
+- [Migrations](reference_migrations.md) — How to run database migrations
+- [Feature Flags](reference_feature_flags.md) — Where feature flags live
+- [Billing Provider](reference_billing_provider.md) — Billing goes through the payment provider sandbox in tests
+- [Error Tracking](reference_error_tracking.md) — Errors go to the error tracker
+- [Board Redesign](project_board_redesign.md) — Board redesign: decided on a two-column layout
+- [Public Api Scope](project_public_api_scope.md) — Public API v1 covers read endpoints only
+- [Pricing Tiers](project_pricing_tiers.md) — Two pricing tiers
+- [Local Dev](reference_local_dev.md) — How to start acme-app locally
+- [Secrets Rule](reference_secrets_rule.md) — Where secrets live
+- [Support Inbox](reference_support_inbox.md) — Support email goes to the shared inbox
+- [Dns Provider](reference_dns_provider.md) — DNS is managed at the registrar
+- [Monitoring](reference_monitoring.md) — Uptime checks every minute
+
+## Session log (pasted over time)
+
+- 2025-02-02 session 001: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-03 session 002: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-04 session 003: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-05 session 004: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-06 session 005: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-07 session 006: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-08 session 007: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-09 session 008: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-10 session 009: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-11 session 010: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-12 session 011: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-13 session 012: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-14 session 013: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-15 session 014: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-16 session 015: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-17 session 016: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-18 session 017: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-19 session 018: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-20 session 019: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-21 session 020: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-22 session 021: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-23 session 022: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-24 session 023: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-25 session 024: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-26 session 025: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-27 session 026: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-28 session 027: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-01 session 028: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-02 session 029: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-03 session 030: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-04 session 031: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-05 session 032: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-06 session 033: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-07 session 034: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-08 session 035: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-09 session 036: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-10 session 037: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-11 session 038: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-12 session 039: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-13 session 040: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-14 session 041: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-15 session 042: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-16 session 043: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-17 session 044: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-18 session 045: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-19 session 046: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-20 session 047: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-21 session 048: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-22 session 049: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-23 session 050: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-24 session 051: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-25 session 052: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-26 session 053: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-27 session 054: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-28 session 055: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-01 session 056: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-02 session 057: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-03 session 058: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-04 session 059: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-05 session 060: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-06 session 061: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-07 session 062: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-08 session 063: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-09 session 064: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-10 session 065: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-11 session 066: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-12 session 067: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-13 session 068: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-14 session 069: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-15 session 070: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-16 session 071: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-17 session 072: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-18 session 073: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-19 session 074: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-20 session 075: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-21 session 076: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-22 session 077: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-23 session 078: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-24 session 079: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-25 session 080: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-26 session 081: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-27 session 082: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-28 session 083: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-01 session 084: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-02 session 085: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-03 session 086: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-04 session 087: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-05 session 088: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-06 session 089: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-07 session 090: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-08 session 091: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-09 session 092: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-10 session 093: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-11 session 094: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-12 session 095: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-13 session 096: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-14 session 097: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-15 session 098: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-16 session 099: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-17 session 100: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-18 session 101: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-19 session 102: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-20 session 103: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-21 session 104: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-22 session 105: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-23 session 106: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-24 session 107: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-25 session 108: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-26 session 109: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-27 session 110: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-28 session 111: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-01 session 112: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-02 session 113: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-03 session 114: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-04 session 115: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-05 session 116: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-06 session 117: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-07 session 118: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-08 session 119: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-09 session 120: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-10 session 121: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-11 session 122: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-12 session 123: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-13 session 124: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-14 session 125: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-15 session 126: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-16 session 127: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-17 session 128: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-18 session 129: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-19 session 130: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-20 session 131: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-21 session 132: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-22 session 133: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-23 session 134: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-24 session 135: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-25 session 136: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-26 session 137: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-27 session 138: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-28 session 139: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-01 session 140: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-02 session 141: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-03 session 142: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-04 session 143: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-05 session 144: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-06 session 145: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-07 session 146: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-08 session 147: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-09 session 148: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-10 session 149: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-11 session 150: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-12 session 151: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-13 session 152: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-14 session 153: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-15 session 154: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-16 session 155: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-17 session 156: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-18 session 157: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-19 session 158: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-20 session 159: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-21 session 160: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-22 session 161: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-23 session 162: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-24 session 163: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-25 session 164: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-26 session 165: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-27 session 166: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-28 session 167: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-01 session 168: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-02 session 169: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-03 session 170: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-04 session 171: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-05 session 172: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-06 session 173: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-07 session 174: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-08 session 175: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-09 session 176: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-10 session 177: worked on acme-app; see the notes above for anything that mattered.
+- 2025-02-11 session 178: worked on acme-app; see the notes above for anything that mattered.
+- 2025-03-12 session 179: worked on acme-app; see the notes above for anything that mattered.
+- 2025-01-13 session 180: worked on acme-app; see the notes above for anything that mattered.
