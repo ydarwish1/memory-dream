@@ -57,3 +57,27 @@ A list, one entry per note you checked:
 - `split` is `dev` (you may look at it while improving memory) or `heldout` (you may not).
 - `proof` is the transcript line (or note) that shows the answer is true.
 - `kind` (optional): `transcript` (default, proven by a session) or `note` (a regression question proven by a note). Score them apart with `score.py --kind`.
+
+## extras.json (optional; `report.py --extras`)
+
+What the audit cannot know on its own: your verdicts on broken links, the machines that share the pool, and extra fixes.
+`eval/fixture/example-extras.json` is a full example.
+
+```json
+{
+  "machines": [
+    {"name": "Laptop", "status": "ok", "detail": "synced 09:12",
+     "good": ["Pulled and pushed the pool at 09:12"], "issues": []}
+  ],
+  "links": {
+    "notes_page.md -> [[wikilinks]]": {"verdict": "false", "why": "example text, not a link"}
+  },
+  "fixes": [
+    {"label": "Give the index one writer", "text": "Make one machine the only writer of MEMORY.md."}
+  ]
+}
+```
+
+- `machines`: up to four, drawn on top of the map. `status` is `ok`, `warn`, `bad` or `unknown`; `detail` is the short line under the name (about 20 characters).
+- `links`: keyed by the note and the link exactly as the audit prints them (`note.md -> [[target]]` or `note.md -> (target.md)`). `verdict` is `false`, `missing`, `renamed` or `archived`; `why` is shown when someone hovers the link.
+- `fixes`: extra items for the cart, each a short `label` and the `text` that goes into the prompt.

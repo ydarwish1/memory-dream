@@ -43,7 +43,8 @@ step, which waits for your yes.
 
 1. **audit** - a report: index size against the 200 line / 25 KB budget, which notes are tested
    rules and which are copies of live state, duplicates, broken links, conflict copies, notes
-   nothing points to, and how often each note is read.
+   nothing points to, and how often each note is read. `report.py` draws the same audit as one
+   interactive page (see [Visual report](#visual-report)).
 2. **eval** - builds a question set from your own past sessions (things a session really had to
    look up), holds some out, and scores how well the memory answers them.
 3. **dream** - on a copy: checks the notes that can go stale against your transcripts and one
@@ -95,6 +96,51 @@ memory, your agent writes that file itself during the dream.
 
 Tokens went up on this small fixture: the notes are tiny, so a topic page adds more than it saves.
 On a large memory the trade can go the other way. Measure it on yours.
+
+## Visual report
+
+Numbers are easy to skim past. The report turns the audit into one page you can look at: what is
+broken, what is fine, and a cart that turns your picks into one prompt for the dream pass.
+
+```bash
+python3 scripts/report.py eval/fixture/pool --transcripts eval/fixture/transcripts \
+  --extras eval/fixture/example-extras.json --label "example memory" --out /tmp/memory-report.html
+```
+
+Open the file in any browser. It is one self-contained HTML file and works offline (fonts fall
+back to your system fonts). It reads the pool and writes only the page. The pictures below are the
+made-up fixture memory, not a real one.
+
+**The system at a glance.** The index with its 200-line budget, the note pool as a ring (rules,
+state notes, duplicates, contradicted), the transcripts, and the machines that share the pool.
+Green works, amber needs a look, red is broken. Hover any box for the details.
+
+![Report overview: headline, four numbers, and a map of the memory system](docs/images/report-overview.png)
+
+**Every note, one square each.** Notes with problems come first, the most-read first. Hover a
+square to see its name, what is wrong with it and what is fine.
+
+![Every note as a square, with a tooltip on one note](docs/images/report-notes-hover.png)
+
+**Broken links.** Each line runs from the note that holds the link to where it points. Red dashes
+go to notes that do not exist, amber to a renamed or archived note, grey to false alarms. The
+report finds renames and typos on its own (`[[staging-acess]]` → `reference_staging_access`).
+
+![Broken-link map with one link highlighted and its tooltip](docs/images/report-links-hover.png)
+
+**The fix cart.** Click anything, press Add fix, then open the cart. It writes one prompt that
+asks your agent for a dream pass on a copy, with every fix you picked. Nothing changes until you
+say yes. The cart is kept in your browser only.
+
+![Fix cart with four fixes and the prompt to copy](docs/images/report-cart.png)
+
+It works on a phone and in dark mode too.
+
+<img src="docs/images/report-phone-dark.png" alt="The report on a phone in dark mode" width="260">
+
+The audit cannot know some things on its own: which flagged links are only example text, and
+which machines share your pool. Put those in an extras file (`--extras`, format in
+[references/formats.md](references/formats.md)) and build the page again.
 
 ## How it was made
 
