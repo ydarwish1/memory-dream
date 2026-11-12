@@ -33,6 +33,10 @@ def main():
     # audit must see every planted defect
     check('audit: index over budget', a['index']['over_budget'] == key['index_over_budget'], '(%d lines)' % a['index']['lines'])
     check('audit: conflict copies', sorted(a['conflict_copies']) == sorted(key['conflict_copies']), str(a['conflict_copies']))
+    check('audit: sync leftovers counted, not read as notes', a['sync_leftovers'] == key['sync_leftovers']
+          and not any('~' in f for f in a['class_of']), str(a['sync_leftovers']))
+    contra = sorted(f for f, c in a['class_of'].items() if c == 'contradicted')
+    check('audit: only the older note of a superseded pair is contradicted', contra == sorted(key['named_stale']), str(contra))
     found_dups = set(p['duplicate'] for p in a['duplicates']) | set(a['series_older'])
     for d in key['duplicates']:
         check('audit: duplicate %s' % d['duplicate'], d['duplicate'] in found_dups)

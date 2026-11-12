@@ -4,7 +4,7 @@
 usage: python3 audit.py POOL [--index MEMORY.md] [--findings findings.json] [--transcripts DIR] [--json OUT]
 
 Reports: index size against the 200 line / 25 KB budget, note classes (rule / state / duplicate /
-contradicted), verified markers, conflict copies, broken links, orphans (notes the index and topic
+contradicted), verified markers, conflict copies, sync leftovers (.stversions, counted only), broken links, orphans (notes the index and topic
 pages never mention), and, with --transcripts, how often each note was read."""
 import os
 import sys
@@ -16,12 +16,49 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import memlib as M
 
 
+NAME_MAX = 150  # read back at most this many bytes before a '.md'
+# Bytes a note file name may hold. Any other byte ends the name. translate() maps them to 'a' and the rest to ' '.
+NAME_TABLE = bytes(0x61 if chr(b) in 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-' else 0x20 for b in range(256))
+
+
 def reads_from_transcripts(tdir, notes):
+    """How often each note's file name appears in the transcripts.
+    One pass per transcript: find each literal '.md', read the name back (up to NAME_MAX bytes), map it to a note
+    once. Counting every note name in every transcript is one pass per note and does not finish on gigabytes; a
+    name regex over the whole text backtracks on base64 image data and is as slow."""
     counts = dict((f, 0) for f in notes)
+    memo = {}
+
+    def note_of(name):
+        if name not in memo:
+            s, r = name.decode('utf-8', 'replace'), None
+            if s in counts:
+                r = s
+            else:  # 'old_feedback_x.md' or '-feedback_x.md' still names feedback_x.md, as a substring count did
+                for i, ch in enumerate(s):
+                    if ch in '_-.' and s[i + 1:] in counts:
+                        r = s[i + 1:]
+                        break
+            memo[name] = r
+        return memo[name]
+
     for p in glob.glob(os.path.join(tdir, '**', '*.jsonl'), recursive=True):
-        text = M.read(p)
-        for f in notes:
-            counts[f] += text.count(f)
+        try:
+            with open(p, 'rb') as fh:
+                data = fh.read()
+        except OSError:
+            continue
+        i = data.find(b'.md')
+        while i != -1:
+            start = max(0, i - NAME_MAX)
+            j = start + data[start:i].translate(NAME_TABLE).rfind(b' ') + 1
+            if j > 0 and data[j - 1:j] == b'\\':  # JSON escape before the name: \nname.md, \tname.md, —name.md
+                j += 1 if data[j:j + 1] in (b'n', b't', b'r', b'b', b'f') else 5 if data[j:j + 1] == b'u' else 0
+            if j < i:
+                f = note_of(data[j:i + 3])
+                if f:
+                    counts[f] += 1
+            i = data.find(b'.md', i + 3)
     return counts
 
 
@@ -58,6 +95,7 @@ def audit(pool, index='MEMORY.md', findings=None, transcripts=None):
         duplicates=dpairs, series_older=olds,
         verified_marked=len(marked), external_state_notes=len(ext), external_state_list=sorted(ext), external_state_unmarked=sorted(unmarked),
         conflict_copies=M.conflict_copies(pool),
+        sync_leftovers=M.sync_leftovers(pool),
         broken_links=M.broken_links(pool, notes),
         orphans=orphans,
     )
@@ -88,6 +126,8 @@ def main():
     print('  markers    %d notes say verified / not re-checked; %d of %d machine-state notes have no marker' % (
         rep['verified_marked'], len(rep['external_state_unmarked']), rep['external_state_notes']))
     print('  conflicts  %d copies: %s' % (len(rep['conflict_copies']), ', '.join(rep['conflict_copies'])))
+    for d, c in sorted(rep['sync_leftovers'].items()):
+        print('  leftovers  %d files in %s (sync tool copies, not notes)' % (c, d))
     print('  links      %d broken' % len(rep['broken_links']))
     for b in rep['broken_links'][:20]:
         print('             %s -> %s' % (b['note'], b['link']))
