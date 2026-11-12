@@ -52,7 +52,7 @@ Every routine below takes a POOL folder. For a custom store, export it to a fold
 python3 SKILL_DIR/scripts/audit.py POOL --transcripts TRANSCRIPTS_DIR --json /tmp/memory-audit.json
 ```
 
-It reports: index lines and bytes against 200 / 25 KB; each note's class (rule, state, duplicate, contradicted: a note is "contradicted" only when your findings.json or another note says so; the transcripts are evidence you judge in the dream); how many notes carry a "verified" or "not re-checked" marker; the machine-state notes (`external_state_list` in the JSON) and which of them have no marker; conflict copies (`*.sync-conflict-*`, "conflicted copy"); broken `[[links]]` and markdown links; orphans (notes nothing points to); and, with transcripts, how often each note was read.
+It reports: index lines and bytes against 200 / 25 KB; each note's class (rule, state, duplicate, contradicted: a note is "contradicted" only when your findings.json or another note says so; the transcripts are evidence you judge in the dream); how many notes carry a "verified" or "not re-checked" marker; the machine-state notes (`external_state_list` in the JSON) and which of them have no marker; conflict copies (`*.sync-conflict-*`, "conflicted copy"); sync leftovers (files Syncthing keeps in `.stversions/`, counted only, never read as notes); broken `[[links]]` and markdown links; orphans (notes nothing points to); and, with transcripts, how often each note was read.
 
 Tell the user the numbers in plain words. The class labels are rules of thumb (hand checks agree with them about 6 to 8 times in 10): spot-check ten notes and say how many you agree with.
 

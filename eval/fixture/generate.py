@@ -86,6 +86,15 @@ add('reference_release_flow.md', 'reference', 'How a release moves from branch t
 add('project_roadmap.md', 'project', 'acme-app roadmap themes',
     'Roadmap themes for the spring: billing, the board redesign, and the public API. Details were in [[q3-roadmap]]. Decided with alex on 2025-02-18.')
 
+# --- a superseded pair after an earlier dream pass: the newer note names the older one stale, and the pass wrote its
+# marker into the older note. Only the older note is contradicted; the marker must not flag the newer note back.
+add('feedback_changelog_per_commit.md', 'feedback', 'Changelog: one line per commit',
+    '> **Checked 2025-03-02: possibly superseded: named stale by feedback_changelog_by_feature.md. Read the newer note first.**\n\n'
+    'Write the changelog as one line per commit.\n\n**Why:** it was quick to write. Verified 2025-01-18.')
+add('feedback_changelog_by_feature.md', 'feedback', 'Changelog: group by feature',
+    'Group the changelog by feature, one line per change a user can see. This supersedes feedback_changelog_per_commit.md, '
+    'which said one line per commit.\n\n**Why:** alex could not find the billing changes in a list of 40 commits. Verified 2025-03-01.')
+
 # --- orphans: notes the index never mentions
 add('project_cache_warmup_idea.md', 'project', 'Idea: warm the cache after each deploy',
     'Idea from 2025-02-26: warm the cache after each deploy by loading the ten busiest pages. Not built yet. Decided to try it in March.')
@@ -213,9 +222,14 @@ ANSWER_KEY = dict(
                dict(note='project_api_port.md', evidence='transcripts/session-2025-03-12.jsonl:1 and :3 (moved to 9090; health ok on 9090)')],
  state_unmarked=sorted([u[0] for u in UNMARKED] + ['project_acme_deploy_v14.md', 'reference_log_locations.md', 'project_api_port.md',
                         'reference_staging_access.md', 'project_cache_warmup_idea.md']),
+ named_stale=['feedback_changelog_per_commit.md'],
+ sync_leftovers={'.stversions': 2},
  orphans=ORPHANS,
  good_notes_unchanged=[g[0] for g in GOOD],
 )
+
+# --- sync leftovers: old versions Syncthing kept. The audit counts them and never reads them as notes.
+STVERSIONS = ['feedback_small_commits~20250301-120000.md', 'MEMORY~20250302-090000.md']
 
 
 def main():
@@ -228,12 +242,18 @@ def main():
     open(os.path.join(POOL, ANSWER_KEY['conflict_copies'][0]), 'w').write(idx.replace('session 180', 'session 180 (other machine)'))
     g0 = dict(NOTES)['feedback_review_before_merge.md']
     open(os.path.join(POOL, ANSWER_KEY['conflict_copies'][1]), 'w').write(g0.replace('two approvals', 'one approval'))
+    os.makedirs(os.path.join(POOL, '.stversions'), exist_ok=True)
+    for f in STVERSIONS:
+        live = f.split('~')[0] + '.md'
+        src = idx if live == 'MEMORY.md' else dict(NOTES)[live]
+        open(os.path.join(POOL, '.stversions', f), 'w').write(src.replace('Verified', 'Old copy. Verified', 1))
     open(os.path.join(TR, 'session-2025-03-10.jsonl'), 'w').write('\n'.join(SESSION_A) + '\n')
     open(os.path.join(TR, 'session-2025-03-12.jsonl'), 'w').write('\n'.join(SESSION_B) + '\n')
     json.dump(QUESTIONS, open(os.path.join(OUT, 'questions.json'), 'w'), indent=1)
     json.dump(TOPICS, open(os.path.join(OUT, 'topics.json'), 'w'), indent=1)
     json.dump(ANSWER_KEY, open(os.path.join(OUT, 'answer-key.json'), 'w'), indent=1)
-    print('fixture: %d notes + index + 2 conflict copies, 2 transcripts, %d questions -> %s' % (len(NOTES), len(QUESTIONS), OUT))
+    print('fixture: %d notes + index + 2 conflict copies + %d .stversions files, 2 transcripts, %d questions -> %s' % (
+        len(NOTES), len(STVERSIONS), len(QUESTIONS), OUT))
 
 
 if __name__ == '__main__':

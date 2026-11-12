@@ -70,6 +70,12 @@
   "reference_log_locations.md",
   "reference_staging_access.md"
  ],
+ "named_stale": [
+  "feedback_changelog_per_commit.md"
+ ],
+ "sync_leftovers": {
+  ".stversions": 2
+ },
  "orphans": [
   "project_cache_warmup_idea.md",
   "reference_log_locations.md",

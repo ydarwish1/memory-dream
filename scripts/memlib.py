@@ -32,6 +32,11 @@ EXT_RE = re.compile(r'(/home/|/Users/|/opt/|/srv/|/var/|~/|https?://|\bssh\b|loc
 MARK_RE = re.compile(r'\b(verified|not re-checked|unconfirmed|unverified)\b|Checked \d{4}-\d\d-\d\d', re.I)
 SUPERSEDE_RE = re.compile(r'(supersed\w*|replaces?|obsolete|no longer (true|valid|used)|was wrong|is wrong|outdated|stale)[^\n]{0,80}', re.I)
 SERIES_RE = re.compile(r'^(.*?)(?:_v|_p|_phase_?|_round_?|_pr)(\d{1,4})(?:_\d+)*\.md$')
+# The marker a dream pass writes into an older note A: "> **Checked <date>: possibly superseded: named stale by B.md ...**".
+# It says A is stale. It must not also count as A naming B stale, so named_stale_map skips these lines.
+STALE_MARKER_RE = re.compile(r'(?m)^[^\n]*\bnamed stale by\b[^\n]*$', re.I)
+# Folders that sync tools leave in a pool (Syncthing keeps old file versions in .stversions). Counted, never read as notes.
+SYNC_LEFTOVER_DIRS = ('.stversions',)
 
 
 def words(s, keep_stop=False):
@@ -97,6 +102,16 @@ def conflict_copies(pool):
         dn[:] = [d for d in dn if not d.startswith('_archive') and not d.startswith('.')]
         out += [os.path.relpath(os.path.join(dp, f), pool) for f in fn if is_conflict_copy(f)]
     return sorted(out)
+
+
+def sync_leftovers(pool):
+    """File count in each sync-leftover folder at the top of the pool, e.g. {'.stversions': 88}."""
+    out = {}
+    for d in SYNC_LEFTOVER_DIRS:
+        p = os.path.join(pool, d)
+        if os.path.isdir(p):
+            out[d] = sum(len(fn) for _, _, fn in os.walk(p))
+    return out
 
 
 def index_lines(pool, index='MEMORY.md'):
@@ -227,7 +242,7 @@ def classify(f, n, dups, olds, named_stale, findings):
 def named_stale_map(notes):
     out = {}
     for f, n in notes.items():
-        for m in SUPERSEDE_RE.finditer(n.text):
+        for m in SUPERSEDE_RE.finditer(STALE_MARKER_RE.sub('', n.text)):
             for r in re.findall(r'([\w-]+\.md)\b', m.group(0)) + LINK_WIKI_RE.findall(m.group(0)):
                 r = r if r.endswith('.md') else r + '.md'
                 if r in notes and r != f:

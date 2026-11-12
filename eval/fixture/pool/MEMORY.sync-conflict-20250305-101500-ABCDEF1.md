@@ -28,6 +28,8 @@
 - [Onboarding Notes](feedback_onboarding_notes.md) — What a new session should read first
 - [Release Flow](reference_release_flow.md) — How a release moves from branch to production
 - [Roadmap](project_roadmap.md) — acme-app roadmap themes
+- [Changelog Per Commit](feedback_changelog_per_commit.md) — Changelog: one line per commit
+- [Changelog By Feature](feedback_changelog_by_feature.md) — Changelog: group by feature
 - [Db Version](project_db_version.md) — The database runs Postgres 16.2
 - [Disk Usage](project_disk_usage.md) — The app server disk was 81% full
 - [Ci Runner](project_ci_runner.md) — CI runs on a self-hosted runner
