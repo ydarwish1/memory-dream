@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Memory report</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Instrument+Serif&display=swap">
+<style>
+/* memory-dream report. One 760px column: summary, three drawings (system, every note, broken links), then a dock with the fix cart.
+   Two faces: a serif for the one headline and big numbers, a grotesk for the rest. No brand colour; semantic colours mark state. */
+:root {
+  --bg: #ffffff; --surface: #f7f8fb; --ink: #000000; --muted: #6b7182; --faint: #c9cdd8;
+  --line: rgb(12 41 126 / .071); --line-2: rgb(1 17 88 / .239); --on-ink: #f7f8fb;
+  --ok: #10b981; --warn: #f59e0b; --bad: #f43f5e; --hue: #1484f9; --hue-soft: #e3f0fe;
+  --track: #eceef4; --dot-rule: #dfe2ea; --dot-state: #9aa0b0;
+  --shadow: 0 8px 28px rgb(16 18 22 / .12);
+  --serif: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans: "Geist", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101216; --surface: #1a1c23; --ink: #ffffff; --muted: #8a92a6; --faint: #3a3f4d;
+    --line: rgb(222 210 241 / .09); --line-2: rgb(172 194 253 / .251); --on-ink: #1a1c23;
+    --ok: #10b981; --warn: #e9a23b; --bad: #f05a74; --hue: #4f9dfb; --hue-soft: #172a44;
+    --track: #262934; --dot-rule: #2c303b; --dot-state: #687087;
+    --shadow: 0 8px 28px rgb(0 0 0 / .5); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101216; --surface: #1a1c23; --ink: #ffffff; --muted: #8a92a6; --faint: #3a3f4d;
+  --line: rgb(222 210 241 / .09); --line-2: rgb(172 194 253 / .251); --on-ink: #1a1c23;
+  --ok: #10b981; --warn: #e9a23b; --bad: #f05a74; --hue: #4f9dfb; --hue-soft: #172a44;
+  --track: #262934; --dot-rule: #2c303b; --dot-state: #687087;
+  --shadow: 0 8px 28px rgb(0 0 0 / .5); color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 500 16px/1.5 var(--sans); letter-spacing: -.02em; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p, ul, ol { margin: 0; }
+code, .mono { font-family: var(--mono); font-size: 13px; letter-spacing: 0; overflow-wrap: anywhere; }
+button { font: inherit; letter-spacing: inherit; color: inherit; }
+:focus-visible { outline: 0; box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--ink); border-radius: 8px; }
+.wrap { max-width: 760px; margin: 0 auto; padding-block: 56px 160px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 56px; }
+.wrap > * { min-width: 0; }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 14px 0 12px; border-radius: 9999px; background: var(--surface); font-size: 14px; }
+.title { margin-top: 16px; font: 400 46px/1.12 var(--serif); letter-spacing: -.02em; text-wrap: balance; }
+.lead { margin-top: 12px; max-width: 62ch; color: var(--muted); font-size: 17px; text-wrap: pretty; }
+.sec { display: grid; gap: 16px; }
+.h2 { font: 500 24px/1.28 var(--sans); letter-spacing: -.025em; }
+.sub { color: var(--muted); font-size: 14px; max-width: 64ch; }
+.card { padding: 20px; border-radius: 16px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); min-width: 0; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 28px; }
+.stat { display: grid; gap: 2px; padding: 16px; border-radius: 16px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+.stat b { font: 400 34px/1.1 var(--serif); font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: 13px; }
+.badge { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 9999px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--line); font-size: 12px; white-space: nowrap; }
+.badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+.is-ok::before { background: var(--ok); } .is-warn::before { background: var(--warn); } .is-bad::before { background: var(--bad); } .is-info::before { background: var(--hue); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border: 0; border-radius: 9999px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); font-size: 14px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); box-shadow: none; }
+.chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--muted)); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 16px; border: 0; border-radius: 9999px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line-2); font-weight: 600; font-size: 15px; cursor: pointer; white-space: nowrap; }
+.btn.is-primary { background: var(--ink); color: var(--on-ink); box-shadow: none; }
+.btn[disabled] { opacity: .45; cursor: default; }
+.btn svg { width: 18px; height: 18px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+/* drawings */
+.canvas { position: relative; border-radius: 16px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); overflow-x: auto; }
+.canvas svg { display: block; width: 100%; height: auto; }
+#sys svg { min-width: 560px; }
+#lmap svg { min-width: 800px; }
+#lmap { width: min(940px, calc(100vw - 48px)); margin-left: calc((100% - min(940px, calc(100vw - 48px))) / 2); }
+svg text { fill: var(--ink); font-family: var(--sans); }
+svg .t-muted { fill: var(--muted); }
+svg .t-mono { font-family: var(--mono); letter-spacing: 0; }
+.hit { cursor: pointer; }
+.node-box { fill: var(--bg); stroke: var(--line-2); stroke-width: 1; }
+.hit:hover .node-box, .hit.is-sel .node-box { stroke: var(--ink); stroke-width: 1.6; }
+.edge { fill: none; stroke: var(--faint); stroke-width: 1.6; }
+.edge.ok { stroke: var(--ok); }
+.lk { fill: none; stroke-width: 1.8; transition: opacity .15s; }
+.lk.missing { stroke: var(--bad); stroke-dasharray: 5 4; }
+.lk.renamed, .lk.archived { stroke: var(--warn); }
+.lk.archived { stroke-dasharray: 2 4; }
+.lk.false { stroke: var(--faint); }
+.lk-hit { fill: none; stroke: transparent; stroke-width: 12; cursor: pointer; }
+#lmap svg.dim .lk, #lmap svg.dim .lbl { opacity: .14; }
+#lmap svg.dim .on { opacity: 1 !important; }
+#lmap .off { display: none; }
+.lbl { transition: opacity .15s; cursor: pointer; }
+.lbl:hover text { text-decoration: underline; }
+/* note grid */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, 11px); gap: 3px; padding: 20px; }
+.grid i { width: 11px; height: 11px; border-radius: 3px; background: var(--dot-rule); cursor: pointer; }
+.grid i.g0 { background: var(--bad); }
+.grid i.g1 { background: transparent; box-shadow: inset 0 0 0 2px var(--warn); }
+.grid i.g2 { background: var(--warn); }
+.grid i.g3 { background: var(--dot-state); }
+.grid i:hover, .grid i.is-sel { outline: 2px solid var(--ink); outline-offset: 1px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+/* agent list */
+/* tooltip */
+.tip { position: fixed; z-index: 40; max-width: 340px; padding: 14px 16px; border-radius: 14px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--line-2), var(--shadow); font-size: 13px; line-height: 1.45; pointer-events: none; }
+.tip h4, .ins h4 { margin: 0 0 6px; font: 600 14px/1.3 var(--sans); overflow-wrap: anywhere; }
+.tip dl, .ins dl { margin: 6px 0 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; }
+.tip dt, .ins dt { color: var(--muted); }
+.tip dd, .ins dd { margin: 0; overflow-wrap: anywhere; }
+.tip .hint { margin-top: 8px; color: var(--muted); font-size: 12px; }
+/* dock */
+.dock { position: fixed; z-index: 30; left: 0; right: 0; bottom: 0; padding-bottom: max(12px, env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); pointer-events: none; }
+.dock-in { pointer-events: auto; max-width: 760px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 12px 12px 18px; border-radius: 20px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--line-2), var(--shadow); }
+.ins { min-width: 0; font-size: 13px; }
+.ins h4 { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ins p { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.count { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 9999px; background: var(--on-ink); color: var(--ink); font-size: 12px; font-variant-numeric: tabular-nums; }
+.sheet { position: fixed; z-index: 35; left: 0; right: 0; bottom: 0; top: 0; display: grid; align-items: end; padding-top: max(24px, env(safe-area-inset-top, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-bottom: max(12px, env(safe-area-inset-bottom, 0px)); background: rgb(0 0 0 / .32); }
+.sheet-in { max-width: 760px; width: 100%; margin: 0 auto; max-height: 100%; overflow: auto; display: grid; gap: 14px; padding: 20px; border-radius: 20px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--line-2), var(--shadow); }
+.cart { display: grid; gap: 8px; padding: 0; margin: 0; list-style: none; }
+.cart li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 12px 14px; border-radius: 14px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); font-size: 13px; }
+.cart li p { color: var(--muted); overflow-wrap: anywhere; }
+.x { width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; cursor: pointer; color: var(--muted); }
+.x:hover { background: var(--track); color: var(--ink); }
+textarea { width: 100%; min-height: 160px; padding: 12px; border: 0; border-radius: 12px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink); font: 12px/1.5 var(--mono); resize: vertical; }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+@media (max-width: 640px) {
+  .wrap { padding-block: 36px 170px; gap: 44px; }
+  .title { font-size: 33px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid { grid-template-columns: repeat(auto-fill, 10px); gap: 3px; padding: 14px; }
+  .grid i { width: 10px; height: 10px; }
+  .dock-in { grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 12px; }
+  .dock-in .row .btn { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .lk, .lbl { transition: none; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <p class="eyebrow">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      <span id="eyebrow">Memory audit</span>
+    </p>
+    <h1 class="title" id="headline">Memory audit</h1>
+    <p class="lead">Hover anything to see what is wrong and what is fine. Click it to pick it, then add it to the fix cart. The cart writes one prompt to paste into your agent.</p>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <section class="sec" aria-labelledby="h-sys">
+    <h2 class="h2" id="h-sys">How the memory fits together</h2>
+    <p class="sub" id="sys-sub">The index loads at the start of every session and points into the pool of notes. Green parts work. Amber and red parts need a fix.</p>
+    <div class="canvas" id="sys"></div>
+  </section>
+
+  <section class="sec" aria-labelledby="h-grid">
+    <h2 class="h2" id="h-grid">Every note, one square each</h2>
+    <p class="sub" id="grid-sub">Notes with problems come first, most-read first inside each group.</p>
+    <div class="legend" id="legend"></div>
+    <div class="canvas"><div class="grid" id="grid" aria-label="Every note as a square"></div></div>
+    <div class="row">
+      <button class="btn" type="button" id="add-recheck">Add all re-checks</button>
+      <button class="btn" type="button" id="add-dups">Add duplicates and old entries</button>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="h-links" id="links-sec">
+    <h2 class="h2" id="h-links">Broken links</h2>
+    <p class="sub">Left: the note that holds the link, most-read at the top. Right: where the link points. Red dashes go to notes that do not exist. Amber goes to a renamed or archived note. Grey lines are false alarms.</p>
+    <div class="chips" id="filters" role="group" aria-label="Filter links"></div>
+    <div class="canvas" id="lmap"></div>
+    <div class="row"><button class="btn" type="button" id="add-links">Add all real links</button></div>
+  </section>
+
+  <footer class="foot"><span>memory-dream report. Read only: nothing in the pool was changed.</span><span id="foot-date"></span></footer>
+</main>
+
+<div class="tip" id="tip" hidden></div>
+
+<div class="dock" id="dock">
+  <div class="dock-in">
+    <div class="ins" id="ins"><h4>Nothing picked yet</h4><p>Click a box, a square or a line to pick it.</p></div>
+    <div class="row" style="flex-wrap:nowrap">
+      <button class="btn" type="button" id="add-sel" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span id="add-label">Add fix</span>
+      </button>
+      <button class="btn is-primary" type="button" id="open-cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/><circle cx="10" cy="20.5" r="1"/><circle cx="18" cy="20.5" r="1"/></svg>Cart <span class="count" id="cart-n">0</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-in" role="dialog" aria-modal="true" aria-labelledby="cart-h">
+    <div class="row" style="justify-content:space-between"><h2 class="h2" id="cart-h">Fix cart</h2><button class="x" type="button" id="close-cart" aria-label="Close cart">&#x2715;</button></div>
+    <ul class="cart" id="cart"></ul>
+    <p class="sub" id="cart-empty">The cart is empty. Pick something on the map and press Add fix.</p>
+    <label class="sub" for="prompt">The prompt to paste into your agent</label>
+    <textarea id="prompt" readonly></textarea>
+    <div class="row">
+      <button class="btn is-primary" type="button" id="copy">Copy fix prompt</button>
+      <button class="btn" type="button" id="clear">Clear cart</button>
+      <span class="sub" id="copied" aria-live="polite"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var D = /*DATA*/null;
+  if (!D) { document.getElementById('headline').textContent = 'No data: build this page with scripts/report.py'; return; }
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var fmt = function (n) { return Number(n).toLocaleString('en-US'); };
+  var SEV = { missing: 'bad', renamed: 'warn', archived: 'warn', 'false': 'ok' };
+  var FIX = D.fixes, INFO = {};
+  var real = D.links.filter(function (l) { return l.cat !== 'false'; });
+  var cnt = function (c) { return D.links.filter(function (l) { return l.cat === c; }).length; };
+  var I = D.index, over = I.over_budget, okMachines = D.machines.filter(function (m) { return m.status === 'ok'; }).length;
+
+  /* ---- header ---- */
+  var head;
+  if (over) head = 'The index is over budget: ' + fmt(I.lines) + ' of ' + I.line_budget + ' lines';
+  else if (real.length) head = 'Your memory works, but ' + real.length + ' link' + (real.length === 1 ? '' : 's') + ' lead nowhere';
+  else if (D.unmarked.length) head = 'Links are clean; ' + D.unmarked.length + ' state notes need a re-check';
+  else head = 'Your memory is in good shape';
+  $('headline').textContent = head;
+  document.title = D.pool + ' memory report';
+  $('eyebrow').textContent = 'Read-only audit · ' + D.pool + ' · ' + D.date;
+  $('foot-date').textContent = 'Built ' + D.date;
+  var stats = [[fmt(I.lines), 'of ' + I.line_budget + ' index lines'], [fmt(D.notes), 'notes, ' + D.orphans.length + ' orphan' + (D.orphans.length === 1 ? '' : 's')], [real.length, 'real broken links']];
+  stats.push(D.machines.length ? [okMachines + ' / ' + D.machines.length, 'machines fine'] : [D.conflicts.length, 'conflict copies']);
+  $('stats').innerHTML = stats.map(function (s) { return '<div class="stat"><b>' + esc(s[0]) + '</b><span>' + esc(s[1]) + '</span></div>'; }).join('');
+
+  /* ---- info for every node ---- */
+  D.machines.forEach(function (m, k) {
+    INFO['m:' + k] = { t: m.name, s: m.status === 'unknown' ? 'info' : m.status, good: m.good || [], bad: m.issues || [], note: m.detail || null, fx: [] };
+  });
+  var cls = D.classes;
+  var poolBad = [], poolGood = [fmt(D.notes) + ' notes: ' + fmt(cls.rule) + ' rules, ' + fmt(cls.state) + ' state notes'];
+  if (cls.duplicate) poolBad.push(cls.duplicate + ' duplicate or older series notes'); else poolGood.push('No duplicates');
+  if (cls.contradicted) poolBad.push(cls.contradicted + ' notes named stale or contradicted');
+  if (D.unmarked.length) poolBad.push(D.unmarked.length + ' state notes with no "verified" marker');
+  if (D.orphans.length) poolBad.push(D.orphans.length + ' notes nothing links to'); else poolGood.push('0 orphans: every note is linked');
+  if (D.conflicts.length) poolBad.push(D.conflicts.length + ' conflict copies'); else poolGood.push('0 conflict copies');
+  var poolFx = Object.keys(FIX).filter(function (id) { return /^(dup|old|con):/.test(id); });
+  INFO['n:pool'] = { t: 'Note pool ' + D.pool, s: poolBad.length ? 'warn' : 'ok', good: poolGood, bad: poolBad, fx: poolFx };
+  INFO['n:index'] = { t: 'Index (' + I.file + ')', s: over ? 'bad' : 'ok', good: over ? [] : [fmt(I.lines) + ' of ' + I.line_budget + ' lines', fmt(I.bytes) + ' of ' + fmt(I.byte_budget) + ' bytes', 'All of it loads at session start'], bad: over ? ['Over budget: ' + fmt(I.lines) + ' lines, ' + fmt(I.bytes) + ' bytes. Only the first ' + I.line_budget + ' lines or ' + fmt(I.byte_budget) + ' bytes load.'] : [], fx: FIX.index ? ['index'] : [] };
+  INFO['n:tx'] = D.transcripts == null
+    ? { t: 'Transcripts', s: 'info', good: [], bad: [], note: 'Not given. Add --transcripts to see how often each note is read.', fx: [] }
+    : { t: 'Transcripts', s: 'ok', good: [fmt(D.transcripts) + ' session files', D.used + ' notes named at least once'], bad: D.used === 0 ? ['No note file names appear in them, so read counts are 0'] : [], fx: [] };
+  INFO['n:links'] = { t: 'Broken links', s: real.length ? 'bad' : 'ok', good: cnt('false') ? [cnt('false') + ' of ' + D.links.length + ' are false alarms'] : (D.links.length ? [] : ['No broken links']), bad: [cnt('missing') ? cnt('missing') + ' point at notes that do not exist' : null, cnt('renamed') ? cnt('renamed') + ' point at a renamed or misspelled note' : null, cnt('archived') ? cnt('archived') + ' point into an archive' : null].filter(Boolean), fx: D.links.map(function (l, i) { return l.cat === 'false' ? null : 'link:' + i; }).filter(Boolean) };
+  INFO['n:conf'] = { t: 'Conflict copies', s: D.conflicts.length ? 'warn' : 'ok', good: D.conflicts.length ? [] : ['None: no two writers clashed'], bad: D.conflicts.map(function (c) { return c; }), fx: D.conflicts.map(function (c) { return 'cc:' + c; }) };
+  INFO['n:orph'] = { t: 'Orphans', s: D.orphans.length ? 'warn' : 'ok', good: D.orphans.length ? [] : ['Every note is linked from the index or a topic page'], bad: D.orphans.slice(0, 8).concat(D.orphans.length > 8 ? ['and ' + (D.orphans.length - 8) + ' more'] : []), fx: D.orphans.map(function (f) { return 'orph:' + f; }) };
+  D.links.forEach(function (l, i) {
+    INFO['link:' + i] = { t: l.src + '  →  ' + l.tgt, s: SEV[l.cat], good: l.cat === 'false' ? ['False alarm: nothing is broken'] : [], bad: l.cat === 'false' ? [] : [l.why], note: l.cat === 'false' ? l.why : null, fixText: FIX['link:' + i].text, fx: ['link:' + i], m: D.transcripts == null ? null : l.m };
+  });
+  var GROUPS = ['Has a broken link', 'Duplicate, older or contradicted', 'State, no "verified" marker', 'State, marked', 'Rule'];
+  D.grid.forEach(function (n) {
+    var good = [];
+    if (!n.i.length) good.push('No problems found');
+    good.push(n.c === 'rule' ? 'A rule: a lesson that stays true' : 'A state note: a fact that can go stale');
+    INFO['note:' + n.f] = { t: n.f, s: n.g === 0 ? 'bad' : (n.g <= 2 || n.i.length ? 'warn' : 'ok'), good: good, bad: n.i, fx: n.fx, m: D.transcripts == null ? null : n.m };
+  });
+
+  /* ---- cart (kept in this browser only) ---- */
+  var KEY = 'memory-dream-cart:' + D.pool, cart = [];
+  try { cart = JSON.parse(localStorage.getItem(KEY) || '[]').filter(function (id) { return FIX[id]; }); } catch (e) { cart = []; }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(cart)); } catch (e) {} }
+  function addAll(ids) { ids.forEach(function (id) { if (FIX[id] && cart.indexOf(id) < 0) cart.push(id); }); save(); renderCart(); renderIns(); }
+  function prompt() {
+    if (!cart.length) return '';
+    return 'Run a memory-dream pass on my memory pool "' + D.pool + '" with these fixes. Work on a copy with dream.py, show me the diff, and apply only after I say yes.\n\n' +
+      cart.map(function (id, k) { return (k + 1) + '. ' + FIX[id].text; }).join('\n') +
+      '\n\nSource: the read-only memory-dream audit of ' + D.date + '.';
+  }
+  function renderCart() {
+    $('cart-n').textContent = cart.length;
+    $('cart-empty').hidden = cart.length > 0;
+    $('cart').innerHTML = cart.map(function (id) {
+      return '<li><div><b>' + esc(FIX[id].label) + '</b><p>' + esc(FIX[id].text) + '</p></div><button class="x" type="button" data-rm="' + esc(id) + '" aria-label="Remove">&#x2715;</button></li>';
+    }).join('');
+    $('prompt').value = prompt();
+  }
+  $('cart').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-rm]'); if (!b) return;
+    cart = cart.filter(function (id) { return id !== b.getAttribute('data-rm'); }); save(); renderCart(); renderIns();
+  });
+  $('open-cart').onclick = function () { $('sheet').hidden = false; $('close-cart').focus(); };
+  $('close-cart').onclick = function () { $('sheet').hidden = true; };
+  $('sheet').addEventListener('click', function (e) { if (e.target === $('sheet')) $('sheet').hidden = true; });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { $('sheet').hidden = true; $('tip').hidden = true; } });
+  $('clear').onclick = function () { cart = []; save(); renderCart(); renderIns(); };
+  $('copy').onclick = function () {
+    var t = prompt(); if (!t) return;
+    var done = function () { $('copied').textContent = 'Copied. Paste it into your agent.'; };
+    var fallback = function () { $('prompt').focus(); $('prompt').select(); $('copied').textContent = 'Selected. Press Ctrl+C or Cmd+C to copy.'; };
+    try { navigator.clipboard.writeText(t).then(done, fallback); } catch (e) { fallback(); }
+  };
+
+  /* ---- hover tooltip and click inspector ---- */
+  var sel = null, svg = null;
+  function lines(info) {
+    var h = '';
+    info.bad.forEach(function (b) { h += '<dt>Issue</dt><dd>' + esc(b) + '</dd>'; });
+    info.good.forEach(function (g) { h += '<dt>Good</dt><dd>' + esc(g) + '</dd>'; });
+    if (info.note) h += '<dt>Note</dt><dd>' + esc(info.note) + '</dd>';
+    if (info.m != null) h += '<dt>Used</dt><dd>' + info.m + ' mentions in transcripts</dd>';
+    if (info.fixText) h += '<dt>Fix</dt><dd>' + esc(info.fixText) + '</dd>';
+    return h;
+  }
+  function tipHtml(info) {
+    return '<h4>' + esc(info.t) + ' <span class="badge is-' + info.s + '">' + ({ ok: 'Fine', warn: 'Needs a look', bad: 'Broken', info: 'Info' })[info.s] + '</span></h4><dl>' + lines(info) + '</dl>' +
+      (info.fx.length ? '<p class="hint">Click to pick it, then Add fix.</p>' : '');
+  }
+  var tip = $('tip');
+  var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  function idOf(el) { var h = el && el.closest && el.closest('[data-id]'); return h ? h.getAttribute('data-id') : null; }
+  document.addEventListener('pointermove', function (e) {
+    if (!fine) return;
+    var id = idOf(e.target);
+    if (!id || !INFO[id]) { tip.hidden = true; hilite(null); return; }
+    tip.innerHTML = tipHtml(INFO[id]); tip.hidden = false;
+    var w = tip.offsetWidth, h = tip.offsetHeight, x = e.clientX + 16, y = e.clientY + 16;
+    if (x + w > innerWidth - 8) x = Math.max(8, e.clientX - w - 16);
+    if (y + h > innerHeight - 100) y = Math.max(8, e.clientY - h - 16);
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+    hilite(id);
+  });
+  function pick(id) {
+    if (!INFO[id]) return;
+    document.querySelectorAll('.is-sel').forEach(function (n) { n.classList.remove('is-sel'); });
+    document.querySelectorAll('[data-id="' + CSS.escape(id) + '"]').forEach(function (n) { n.classList.add('is-sel'); });
+    sel = id; renderIns();
+  }
+  function renderIns() {
+    var b = $('add-sel');
+    if (!sel) return;
+    var info = INFO[sel], first = info.bad[0] || info.note || info.good[0] || '';
+    $('ins').innerHTML = '<h4>' + esc(info.t) + '</h4><p>' + esc(first) + '</p>';
+    var todo = info.fx.filter(function (id) { return cart.indexOf(id) < 0; });
+    b.disabled = !todo.length;
+    $('add-label').textContent = !info.fx.length ? 'Nothing to fix' : (todo.length ? (todo.length === 1 ? 'Add fix' : 'Add ' + todo.length + ' fixes') : 'In cart');
+  }
+  $('add-sel').onclick = function () { if (sel) addAll(INFO[sel].fx); };
+  document.addEventListener('click', function (e) { var id = idOf(e.target); if (id) pick(id); });
+  document.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && e.target.getAttribute && e.target.getAttribute('data-id')) { e.preventDefault(); pick(e.target.getAttribute('data-id')); } });
+
+  /* ---- system map ---- */
+  (function () {
+    var M = D.machines.slice(0, 4), top = M.length ? 104 : 24;
+    var col = { ok: 'var(--ok)', warn: 'var(--warn)', bad: 'var(--bad)', info: 'var(--hue)', unknown: 'var(--hue)' };
+    var cy = top + 110, H = cy + 140, h = '<svg viewBox="0 0 720 ' + H + '" role="img" aria-label="Map of the memory: index, note pool, transcripts and checks">';
+    M.forEach(function (m, k) {
+      var cx = (k + 0.5) * 720 / M.length;
+      h += '<path class="edge ' + (m.status === 'ok' ? 'ok' : '') + '" d="M' + cx + ' 76 C' + cx + ' ' + (cy - 70) + ' 360 ' + (cy - 90) + ' 360 ' + (cy - 64) + '"/>';
+    });
+    h += '<path class="edge" d="M296 ' + cy + ' L208 ' + cy + '"/><path class="edge" d="M424 ' + cy + ' L512 ' + cy + '"/>';
+    h += '<path class="edge" d="M360 ' + (cy + 64) + ' L360 ' + (cy + 82) + '"/><path class="edge" d="M330 ' + (cy + 57) + ' C300 ' + (cy + 80) + ' 160 ' + (cy + 70) + ' 120 ' + (cy + 82) + '"/><path class="edge" d="M390 ' + (cy + 57) + ' C420 ' + (cy + 80) + ' 560 ' + (cy + 70) + ' 600 ' + (cy + 82) + '"/>';
+    h += '<text x="252" y="' + (cy - 8) + '" text-anchor="middle" font-size="11" class="t-muted">points into</text><text x="468" y="' + (cy - 8) + '" text-anchor="middle" font-size="11" class="t-muted">read in</text>';
+    M.forEach(function (m, k) {
+      var cx = (k + 0.5) * 720 / M.length, w = Math.min(170, 720 / M.length - 20), x = cx - w / 2;
+      h += '<g class="hit" data-id="m:' + k + '" tabindex="0"><rect class="node-box" x="' + x + '" y="24" width="' + w + '" height="52" rx="26"/><circle cx="' + (x + 22) + '" cy="50" r="5" fill="' + (col[m.status] || col.info) + '"/><text x="' + (x + 36) + '" y="47" font-size="14">' + esc(m.name) + '</text><text x="' + (x + 36) + '" y="63" font-size="11" class="t-muted">' + esc((m.detail || '').slice(0, 22)) + '</text></g>';
+    });
+    var gw = Math.min(100, Math.round(100 * I.lines / I.line_budget));
+    h += '<g class="hit" data-id="n:index" tabindex="0"><rect class="node-box" x="20" y="' + (cy - 26) + '" width="188" height="52" rx="16"/><text x="36" y="' + (cy - 5) + '" font-size="14">Index</text><rect x="36" y="' + (cy + 6) + '" width="100" height="6" rx="3" fill="var(--track)"/><rect x="36" y="' + (cy + 6) + '" width="' + gw + '" height="6" rx="3" fill="' + (over ? 'var(--bad)' : 'var(--ink)') + '"/><text x="144" y="' + (cy + 13) + '" font-size="11" class="t-muted">' + I.lines + '/' + I.line_budget + '</text></g>';
+    var parts = [[cls.rule, 'var(--dot-rule)'], [cls.state, 'var(--dot-state)'], [cls.duplicate, 'var(--warn)'], [cls.contradicted, 'var(--bad)']], r = 56, C = 2 * Math.PI * r, off = 0, dn = '';
+    parts.forEach(function (p) { if (!p[0]) return; var len = Math.max(p[0] / D.notes * C, 3); dn += '<circle cx="360" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + p[1] + '" stroke-width="10" stroke-dasharray="' + (len - 1.5).toFixed(2) + ' ' + C.toFixed(2) + '" stroke-dashoffset="' + (-off).toFixed(2) + '"/>'; off += len; });
+    h += '<g class="hit" data-id="n:pool" tabindex="0"><circle cx="360" cy="' + cy + '" r="64" fill="var(--bg)" stroke="var(--line-2)"/><g transform="rotate(-90 360 ' + cy + ')">' + dn + '</g><text x="360" y="' + cy + '" text-anchor="middle" font-size="30" style="font-family:var(--serif)">' + fmt(D.notes) + '</text><text x="360" y="' + (cy + 20) + '" text-anchor="middle" font-size="11" class="t-muted">notes in the pool</text></g>';
+    var tx = INFO['n:tx'];
+    h += '<g class="hit" data-id="n:tx" tabindex="0"><rect class="node-box" x="512" y="' + (cy - 26) + '" width="188" height="52" rx="16"/><circle cx="532" cy="' + cy + '" r="5" fill="' + col[tx.s] + '"/><text x="546" y="' + (cy - 5) + '" font-size="14">Transcripts</text><text x="546" y="' + (cy + 13) + '" font-size="11" class="t-muted">' + (D.transcripts == null ? 'not given' : fmt(D.transcripts) + ' sessions') + '</text></g>';
+    [['n:orph', 120, D.orphans.length + ' orphans'], ['n:links', 360, real.length + ' broken links'], ['n:conf', 600, D.conflicts.length + ' conflict copies']].forEach(function (b) {
+      var s = INFO[b[0]].s;
+      h += '<g class="hit" data-id="' + b[0] + '" tabindex="0"><rect class="node-box" x="' + (b[1] - 94) + '" y="' + (cy + 82) + '" width="188" height="40" rx="20"/><circle cx="' + (b[1] - 72) + '" cy="' + (cy + 102) + '" r="5" fill="' + col[s] + '"/><text x="' + (b[1] - 58) + '" y="' + (cy + 107) + '" font-size="14">' + esc(b[2]) + '</text></g>';
+    });
+    $('sys').innerHTML = h + '</svg>';
+  })();
+
+  /* ---- note grid ---- */
+  (function () {
+    var counts = [0, 0, 0, 0, 0];
+    $('grid').innerHTML = D.grid.map(function (n) { counts[n.g]++; return '<i class="g' + n.g + '" data-id="note:' + esc(n.f) + '"></i>'; }).join('');
+    var sw = ['background:var(--bad)', 'box-shadow:inset 0 0 0 2px var(--warn)', 'background:var(--warn)', 'background:var(--dot-state)', 'background:var(--dot-rule)'];
+    $('legend').innerHTML = GROUPS.map(function (g, k) { return '<span><i style="' + sw[k] + '"></i>' + esc(g) + ' ' + counts[k] + '</span>'; }).join('');
+    if (D.transcripts != null) $('grid-sub').textContent = 'Notes with problems come first, most-read first inside each group. The read count is how often a note\'s file name shows up in the ' + fmt(D.transcripts) + ' transcripts.';
+  })();
+  $('add-recheck').textContent = 'Add all ' + D.unmarked.length + ' re-checks';
+  $('add-recheck').disabled = !D.unmarked.length;
+  $('add-recheck').onclick = function () { addAll(D.unmarked.map(function (f) { return 're:' + f; })); };
+  var oldIds = Object.keys(FIX).filter(function (id) { return /^(dup|old|con):/.test(id); });
+  $('add-dups').disabled = !oldIds.length;
+  $('add-dups').onclick = function () { addAll(oldIds); };
+  $('add-links').textContent = 'Add all ' + real.length + ' real links';
+  $('add-links').disabled = !real.length;
+  $('add-links').onclick = function () { addAll(INFO['n:links'].fx); };
+
+  /* ---- link map ---- */
+  if (!D.links.length) { $('links-sec').hidden = true; }
+  else {
+    $('filters').innerHTML = '<button class="chip" type="button" data-f="all" aria-pressed="true">All ' + D.links.length + '</button>' +
+      [['missing', 'Missing', 'var(--bad)'], ['renamed', 'Renamed', 'var(--warn)'], ['archived', 'Archived', 'var(--warn)'], ['false', 'False alarm', 'var(--faint)']].filter(function (c) { return cnt(c[0]); }).map(function (c) {
+        return '<button class="chip" type="button" data-f="' + c[0] + '" aria-pressed="false" style="--c:' + c[2] + '"><i></i>' + c[1] + ' ' + cnt(c[0]) + '</button>';
+      }).join('');
+    var srcs = [], tgts = [], mOf = {};
+    D.links.forEach(function (l) { if (srcs.indexOf(l.src) < 0) { srcs.push(l.src); mOf[l.src] = l.m; } });
+    srcs.sort(function (a, b) { return mOf[b] - mOf[a]; });
+    var order = D.links.map(function (l, i) { return i; }).sort(function (a, b) { return srcs.indexOf(D.links[a].src) - srcs.indexOf(D.links[b].src); });
+    order.forEach(function (i) { if (tgts.indexOf(D.links[i].tgt) < 0) tgts.push(D.links[i].tgt); });
+    var row = 26, top = 34, n = Math.max(srcs.length, tgts.length), H = top + n * row + 10;
+    var ys = function (i, k) { return k <= 1 ? top + (n * row) / 2 : top + i * ((n - 1) * row / (k - 1)) + row / 2; };
+    var X1 = 382, X2 = 538;
+    var h = '<svg viewBox="0 0 920 ' + H + '" role="img" aria-label="Broken links from each note to its target">';
+    h += '<text x="370" y="20" text-anchor="end" font-size="12" class="t-muted">Note with the link</text><text x="550" y="20" font-size="12" class="t-muted">Where it points</text>';
+    D.links.forEach(function (l, i) {
+      var y1 = ys(srcs.indexOf(l.src), srcs.length), y2 = ys(tgts.indexOf(l.tgt), tgts.length);
+      var d = 'M' + X1 + ' ' + y1 + ' C' + (X1 + 90) + ' ' + y1 + ' ' + (X2 - 90) + ' ' + y2 + ' ' + X2 + ' ' + y2;
+      h += '<g data-id="link:' + i + '" data-cat="' + l.cat + '" data-s="' + srcs.indexOf(l.src) + '" data-t="' + tgts.indexOf(l.tgt) + '" class="lkg"><path class="lk ' + l.cat + '" d="' + d + '"/><path class="lk-hit" d="' + d + '"/></g>';
+    });
+    srcs.forEach(function (s, k) {
+      var y = ys(k, srcs.length), mine = D.links.filter(function (l) { return l.src === s; });
+      var bad = mine.some(function (l) { return l.cat !== 'false'; });
+      h += '<g class="lbl" data-id="note:' + esc(s) + '" data-s="' + k + '" data-cats="' + mine.map(function (l) { return l.cat; }).join(' ') + '"><text x="370" y="' + (y + 4) + '" text-anchor="end" font-size="11.5" class="t-mono">' + esc(s) + '</text><circle cx="' + X1 + '" cy="' + y + '" r="4" fill="' + (bad ? 'var(--ink)' : 'var(--faint)') + '"/></g>';
+    });
+    tgts.forEach(function (t, k) {
+      var y = ys(k, tgts.length), ids = [], l = null;
+      D.links.forEach(function (x, i) { if (x.tgt === t) { l = x; ids.push(i); } });
+      var circ = l.cat === 'missing'
+        ? '<circle cx="' + X2 + '" cy="' + y + '" r="5" fill="var(--surface)" stroke="var(--bad)" stroke-width="1.5" stroke-dasharray="2 2"/>'
+        : '<circle cx="' + X2 + '" cy="' + y + '" r="4" fill="' + (l.cat === 'false' ? 'var(--faint)' : 'var(--warn)') + '"/>';
+      INFO['tgt:' + k] = { t: t, s: SEV[l.cat], good: l.cat === 'false' ? ['False alarm: nothing is broken'] : [], bad: l.cat === 'false' ? [] : [l.why], note: 'Linked from ' + ids.map(function (i) { return D.links[i].src; }).join(', '), fx: ids.map(function (i) { return 'link:' + i; }) };
+      h += '<g class="lbl" data-id="tgt:' + k + '" data-cat="' + l.cat + '" data-t="' + k + '">' + circ + '<text x="550" y="' + (y + 4) + '" font-size="11.5" class="t-mono' + (l.cat === 'false' ? ' t-muted' : '') + '">' + esc(l.short) + '</text></g>';
+    });
+    $('lmap').innerHTML = h + '</svg>';
+    svg = $('lmap').querySelector('svg');
+    $('filters').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-f]'); if (!b) return;
+      var f = b.getAttribute('data-f');
+      $('filters').querySelectorAll('[data-f]').forEach(function (c) { c.setAttribute('aria-pressed', String(c === b)); });
+      svg.querySelectorAll('.lkg, .lbl[data-cat]').forEach(function (g) { g.classList.toggle('off', f !== 'all' && g.getAttribute('data-cat') !== f); });
+      svg.querySelectorAll('.lbl[data-cats]').forEach(function (g) { g.classList.toggle('off', f !== 'all' && g.getAttribute('data-cats').split(' ').indexOf(f) < 0); });
+    });
+  }
+  function hilite(id) {
+    if (!svg) return;
+    svg.querySelectorAll('.on').forEach(function (n) { n.classList.remove('on'); });
+    var el = id && svg.querySelector('[data-id="' + CSS.escape(id) + '"]');
+    if (!el) { svg.classList.remove('dim'); return; }
+    svg.classList.add('dim'); el.classList.add('on');
+    var s = el.getAttribute('data-s'), t = el.getAttribute('data-t'), isLink = el.classList.contains('lkg');
+    svg.querySelectorAll('.lkg').forEach(function (g) {
+      var hit = isLink ? g === el : (s != null ? g.getAttribute('data-s') === s : g.getAttribute('data-t') === t);
+      if (!hit) return;
+      g.classList.add('on'); g.querySelectorAll('.lk').forEach(function (p) { p.classList.add('on'); });
+      var a = svg.querySelector('.lbl[data-s="' + g.getAttribute('data-s') + '"]'), b = svg.querySelector('.lbl[data-t="' + g.getAttribute('data-t') + '"]');
+      if (a) a.classList.add('on'); if (b) b.classList.add('on');
+    });
+  }
+
+  var sysBox = $('sys');
+  sysBox.scrollLeft = (sysBox.scrollWidth - sysBox.clientWidth) / 2;
+  renderCart();
+})();
+</script>
+</body>
+</html>

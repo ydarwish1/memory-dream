@@ -1,0 +1,16 @@
+{
+  "machines": [
+    {"name": "Laptop", "status": "ok", "detail": "synced 09:12",
+     "good": ["Pulled and pushed the pool at 09:12", "Reads the index at every session start"], "issues": []},
+    {"name": "Desktop", "status": "warn", "detail": "2 conflict copies",
+     "good": ["Synced at 08:55"], "issues": ["Wrote MEMORY.md at the same time as the laptop and left 2 conflict copies"]},
+    {"name": "Server", "status": "ok", "detail": "nightly job",
+     "good": ["Runs the nightly audit", "Holds the pool only, no skills"], "issues": []}
+  ],
+  "links": {
+    "reference_release_flow.md -> [[old-runbook]]": {"verdict": "missing", "why": "The old runbook was deleted, not archived. The release flow note still points at it."}
+  },
+  "fixes": [
+    {"label": "Give the index one writer", "text": "Make the server the only machine that writes MEMORY.md; the laptop and desktop add notes and an inbox line only. That stops new conflict copies."}
+  ]
+}

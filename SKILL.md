@@ -56,6 +56,14 @@ It reports: index lines and bytes against 200 / 25 KB; each note's class (rule, 
 
 Tell the user the numbers in plain words. The class labels are rules of thumb (hand checks agree with them about 6 to 8 times in 10): spot-check ten notes and say how many you agree with.
 
+**Visual report (optional).** When the user wants to see the memory rather than read numbers:
+
+```bash
+python3 SKILL_DIR/scripts/report.py POOL --transcripts TRANSCRIPTS_DIR --out /tmp/memory-report.html
+```
+
+It writes one HTML page: a map of the memory, every note as a square, a map of the broken links, and a fix cart that turns the picked items into one prompt for routine 3. It sorts each broken link as missing, renamed (a close match exists) or archived on its own. Open the flagged notes before you call a link a false alarm, then record your verdicts, and the machines that share the pool if there are several, in an extras file (`--extras`, format in `references/formats.md`) and build the page again.
+
 ## Routine 2: eval (score the baseline)
 
 Read `eval/build-eval.md`. In short:
