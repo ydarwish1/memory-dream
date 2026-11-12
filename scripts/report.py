@@ -126,6 +126,11 @@ def build(pool, transcripts=None, extras=None, findings=None, index='MEMORY.md',
         fixes['cc:' + c] = dict(label='Resolve ' + c, text='Compare the conflict copy %s with its live note, keep the right text, and archive the copy.' % c)
     for f in rep['orphans']:
         fixes['orph:' + f] = dict(label='Link ' + f, text='Nothing links to %s. Add it to the index or a topic page, or archive it if it is no longer useful.' % f)
+    lo = rep.get('sync_leftovers') or {}  # {folder: file count}, e.g. {'.stversions': 88}
+    leftovers = sum(lo.values())
+    if leftovers:
+        where = ', '.join('%s (%d)' % (d, c) for d, c in sorted(lo.items()))
+        fixes['leftovers'] = dict(label='Clear %d sync leftovers' % leftovers, text='Move the old copies the sync tool kept in %s out of the live pool into an archive folder. They are not notes.' % where)
     if rep['index']['over_budget']:
         fixes['index'] = dict(label='Shrink the index', text='%s is %d lines and %d bytes; only the first %d lines or %d bytes load. Move detail onto topic pages and keep one line per topic.' % (
             index, rep['index']['lines'], rep['index']['bytes'], rep['index']['line_budget'], rep['index']['byte_budget']))
@@ -160,7 +165,7 @@ def build(pool, transcripts=None, extras=None, findings=None, index='MEMORY.md',
     return dict(
         pool=label or rep['pool'], date=datetime.date.today().isoformat(),
         index=rep['index'], notes=rep['notes'], classes=rep['classes'],
-        orphans=rep['orphans'], conflicts=rep['conflict_copies'], marked=rep['verified_marked'],
+        orphans=rep['orphans'], conflicts=rep['conflict_copies'], marked=rep['verified_marked'], leftovers=leftovers,
         transcripts=tcount, used=sum(1 for v in reads.values() if v) if reads else None,
         links=links, grid=grid, unmarked=unmarked, fixes=fixes,
         machines=ex.get('machines', []),

@@ -251,7 +251,8 @@ textarea { width: 100%; min-height: 160px; padding: 12px; border: 0; border-radi
   if (D.unmarked.length) poolBad.push(D.unmarked.length + ' state notes with no "verified" marker');
   if (D.orphans.length) poolBad.push(D.orphans.length + ' notes nothing links to'); else poolGood.push('0 orphans: every note is linked');
   if (D.conflicts.length) poolBad.push(D.conflicts.length + ' conflict copies'); else poolGood.push('0 conflict copies');
-  var poolFx = Object.keys(FIX).filter(function (id) { return /^(dup|old|con):/.test(id); });
+  if (D.leftovers) poolBad.push(D.leftovers + ' old copies kept by the sync tool (not notes)');
+  var poolFx = Object.keys(FIX).filter(function (id) { return /^(dup|old|con):/.test(id) || id === 'leftovers'; });
   INFO['n:pool'] = { t: 'Note pool ' + D.pool, s: poolBad.length ? 'warn' : 'ok', good: poolGood, bad: poolBad, fx: poolFx };
   INFO['n:index'] = { t: 'Index (' + I.file + ')', s: over ? 'bad' : 'ok', good: over ? [] : [fmt(I.lines) + ' of ' + I.line_budget + ' lines', fmt(I.bytes) + ' of ' + fmt(I.byte_budget) + ' bytes', 'All of it loads at session start'], bad: over ? ['Over budget: ' + fmt(I.lines) + ' lines, ' + fmt(I.bytes) + ' bytes. Only the first ' + I.line_budget + ' lines or ' + fmt(I.byte_budget) + ' bytes load.'] : [], fx: FIX.index ? ['index'] : [] };
   INFO['n:tx'] = D.transcripts == null
